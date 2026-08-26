@@ -1,11 +1,16 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   ArrowUpRight,
+  BrainCircuit,
   BriefcaseBusiness,
+  CheckCircle2,
   Code2,
+  DatabaseZap,
   Github,
+  Layers3,
   Linkedin,
   Mail,
+  MapPin,
   Sparkles
 } from 'lucide-react';
 import { Component, useEffect, useMemo, useRef, useState } from 'react';
@@ -14,10 +19,13 @@ import { portfolioData } from './portfolioData.js';
 
 const navItems = [
   { label: 'Work', href: '#work' },
+  { label: 'Approach', href: '#approach' },
   { label: 'Skills', href: '#skills' },
   { label: 'Story', href: '#story' },
   { label: 'Contact', href: '#contact' }
 ];
+
+const focusIcons = [BrainCircuit, Layers3, DatabaseZap];
 
 function useWebGLSupport() {
   const [supported, setSupported] = useState(true);
@@ -191,7 +199,7 @@ function SocialIcon({ label }) {
 }
 
 function App() {
-  const { profile, stats, skills, projects, timeline } = portfolioData;
+  const { profile, stats, focusAreas, skills, projects, timeline } = portfolioData;
   const githubUrl = profile.socials.find((social) => social.label === 'GitHub')?.url;
   const webGLSupported = useWebGLSupport();
 
@@ -237,6 +245,14 @@ function App() {
             <h2>{profile.headline}</h2>
             <p>{profile.summary}</p>
             <p className="mantra">{profile.mantra}</p>
+            <div className="hero-meta" aria-label="Current profile status">
+              <span>
+                <CheckCircle2 size={16} /> {profile.availability}
+              </span>
+              <span>
+                <MapPin size={16} /> Building from {profile.location}
+              </span>
+            </div>
             <div className="hero-actions">
               <a className="button primary" href="#work">
                 <BriefcaseBusiness size={18} /> View Work
@@ -268,6 +284,10 @@ function App() {
                 <p>{project.type}</p>
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
+                <div className="project-outcome">
+                  <CheckCircle2 size={16} />
+                  <span>{project.outcome}</span>
+                </div>
                 <div className="stack">
                   {project.stack.map((item) => (
                     <span key={item}>{item}</span>
@@ -287,10 +307,29 @@ function App() {
           </div>
         </section>
 
+        <section className="section" id="approach">
+          <div className="section-heading">
+            <p className="eyebrow">Approach</p>
+            <h2>Built around product clarity, clean systems, and useful intelligence.</h2>
+          </div>
+          <div className="focus-grid">
+            {focusAreas.map((area, index) => {
+              const Icon = focusIcons[index % focusIcons.length];
+              return (
+                <article className="focus-card" key={area.title}>
+                  <Icon size={22} />
+                  <h3>{area.title}</h3>
+                  <p>{area.text}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
         <section className="section split" id="skills">
           <div className="section-heading">
             <p className="eyebrow">Toolkit</p>
-            <h2>Skills presented like a system, not a plain list.</h2>
+            <h2>A practical stack for turning ideas into durable products.</h2>
           </div>
           <div className="skill-board">
             {skills.map((skill, index) => (
@@ -325,7 +364,7 @@ function App() {
           <div>
             <p className="eyebrow">Contact</p>
             <h2>Let's build something useful.</h2>
-            <p>Open to internships, collaborations, AI/ML projects, and full-stack product work.</p>
+            <p>{profile.availability}. Send a brief project idea, role, or collaboration note.</p>
           </div>
           <div className="contact-actions">
             <a className="button primary" href={`mailto:${profile.email}`}>
@@ -347,6 +386,10 @@ function App() {
           </div>
         </section>
       </main>
+      <footer className="footer">
+        <span>{profile.initials}</span>
+        <p>{profile.name} / AI, ML, and full-stack product development</p>
+      </footer>
     </div>
   );
 }
