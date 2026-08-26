@@ -1,7 +1,7 @@
 export const portfolioData = {
   profile: {
     name: 'Vikas Sampath',
-    initials: 'VK',
+    initials: 'VS',
     role: 'AI/ML & Full Stack Developer',
     location: 'India',
     headline: 'I build intelligent products that turn ideas into something real.',
