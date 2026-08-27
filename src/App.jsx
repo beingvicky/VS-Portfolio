@@ -1,16 +1,20 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
+  Award,
   ArrowUpRight,
   BrainCircuit,
   BriefcaseBusiness,
   CheckCircle2,
   Code2,
+  Cpu,
   DatabaseZap,
   Github,
   Layers3,
   Linkedin,
   Mail,
   MapPin,
+  Rocket,
+  ShieldCheck,
   Sparkles
 } from 'lucide-react';
 import { Component, useEffect, useMemo, useRef, useState } from 'react';
@@ -26,6 +30,7 @@ const navItems = [
 ];
 
 const focusIcons = [BrainCircuit, Layers3, DatabaseZap];
+const principleIcons = [Rocket, ShieldCheck, Cpu];
 
 function useWebGLSupport() {
   const [supported, setSupported] = useState(true);
@@ -89,7 +94,7 @@ function StarField() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial color="#d8f6ff" size={0.035} sizeAttenuation transparent opacity={0.75} />
+      <pointsMaterial color="#d8f6ff" size={0.045} sizeAttenuation transparent opacity={0.85} />
     </points>
   );
 }
@@ -170,14 +175,28 @@ function PortfolioScene() {
       <pointLight position={[-4, -1.5, 2]} intensity={5} color="#2ebfa5" />
       <pointLight position={[4, 1, -1]} intensity={3.5} color="#ff6b4a" />
       <StarField />
-      <group position={[1.35, -0.1, 0]} scale={1.02}>
-        <mesh ref={core}>
-          <icosahedronGeometry args={[1.18, 1]} />
-          <meshStandardMaterial color="#f7efe1" roughness={0.28} metalness={0.12} wireframe />
-        </mesh>
+      <group position={[2.35, 0.42, -0.2]} scale={1.62}>
+        <group ref={core}>
+          <mesh>
+            <icosahedronGeometry args={[1.18, 1]} />
+            <meshStandardMaterial
+              color="#f7efe1"
+              emissive="#2ebfa5"
+              emissiveIntensity={0.16}
+              roughness={0.32}
+              metalness={0.08}
+              transparent
+              opacity={0.26}
+            />
+          </mesh>
+          <mesh>
+            <icosahedronGeometry args={[1.2, 1]} />
+            <meshStandardMaterial color="#f7efe1" emissive="#2ebfa5" emissiveIntensity={0.42} roughness={0.22} wireframe />
+          </mesh>
+        </group>
         <mesh ref={ring}>
-          <torusGeometry args={[1.8, 0.018, 12, 160]} />
-          <meshStandardMaterial color="#d8f6ff" emissive="#2ebfa5" emissiveIntensity={0.7} />
+          <torusGeometry args={[1.86, 0.024, 12, 160]} />
+          <meshStandardMaterial color="#d8f6ff" emissive="#2ebfa5" emissiveIntensity={1.15} />
         </mesh>
         <Ribbon color="#ff6b4a" offset={0.1} />
         <Ribbon color="#2ebfa5" offset={1.7} />
@@ -199,7 +218,7 @@ function SocialIcon({ label }) {
 }
 
 function App() {
-  const { profile, stats, focusAreas, skills, projects, timeline } = portfolioData;
+  const { profile, stats, focusAreas, principles, skills, projects, timeline } = portfolioData;
   const githubUrl = profile.socials.find((social) => social.label === 'GitHub')?.url;
   const webGLSupported = useWebGLSupport();
 
@@ -219,11 +238,19 @@ function App() {
         ) : (
           <SceneFallback />
         )}
+        <div className="scene-signature" aria-hidden="true">
+          <b>{profile.initials}</b>
+          <span className="orbit orbit-one" />
+          <span className="orbit orbit-two" />
+          <span className="orbit orbit-three" />
+        </div>
       </div>
 
       <header className="topbar">
         <a className="brand" href="#home" aria-label={`${profile.name} home`}>
-          <span>{profile.initials}</span>
+          <span className="brand-mark" aria-hidden="true">
+            {profile.initials}
+          </span>
           <strong>{profile.name}</strong>
         </a>
         <nav aria-label="Primary navigation">
@@ -261,6 +288,13 @@ function App() {
                 <Github size={18} /> GitHub
               </a>
             </div>
+            <div className="hero-credentials" aria-label="Professional highlights">
+              {profile.highlights.map((highlight) => (
+                <span key={highlight}>
+                  <Award size={15} /> {highlight}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="hero-stats" aria-label="Portfolio stats">
             {stats.map((stat) => (
@@ -270,6 +304,15 @@ function App() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="signal-strip" aria-label="Portfolio snapshot">
+          {profile.snapshot.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </article>
+          ))}
         </section>
 
         <section className="section" id="work">
@@ -288,6 +331,11 @@ function App() {
                   <CheckCircle2 size={16} />
                   <span>{project.outcome}</span>
                 </div>
+                <ul className="project-signals" aria-label={`${project.title} strengths`}>
+                  {project.signals.map((signal) => (
+                    <li key={signal}>{signal}</li>
+                  ))}
+                </ul>
                 <div className="stack">
                   {project.stack.map((item) => (
                     <span key={item}>{item}</span>
@@ -320,6 +368,20 @@ function App() {
                   <Icon size={22} />
                   <h3>{area.title}</h3>
                   <p>{area.text}</p>
+                </article>
+              );
+            })}
+          </div>
+          <div className="principle-row" aria-label="Delivery principles">
+            {principles.map((principle, index) => {
+              const Icon = principleIcons[index % principleIcons.length];
+              return (
+                <article key={principle.title}>
+                  <Icon size={20} />
+                  <div>
+                    <h3>{principle.title}</h3>
+                    <p>{principle.text}</p>
+                  </div>
                 </article>
               );
             })}
