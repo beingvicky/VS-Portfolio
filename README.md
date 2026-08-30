@@ -1,6 +1,6 @@
 # Vikas Sampath Portfolio
 
-Interactive 3D Developer portfolio built with React, Vite, Three.js, and React Three Fiber.
+Interactive 3D Developer Portfolio built with React, Vite, Three.js, and React Three Fiber.
 
 ## Live Site
 
